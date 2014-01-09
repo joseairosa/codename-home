@@ -39,6 +39,13 @@ group :doc do
   gem 'sdoc', require: false
 end
 
+group :development do
+  gem 'better_errors'
+
+  gem 'pry-plus'
+  gem 'pry-nav'
+end
+
 group :test do
   gem 'rspec-rails'
 end
