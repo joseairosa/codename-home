@@ -1,2 +1,8 @@
-<h1>Test#apis</h1>
-<p>Find me in app/views/test/apis.html.erb</p>
+<div id="user_nav">
+  <% if current_user %>
+    Signed in as <strong><%= current_user.facebook.name %></strong>!
+    <%= link_to "Sign out", signout_path, id: "sign_out" %>
+  <% else %>
+    <%= link_to "Sign in with Facebook", "/auth/facebook", id: "sign_in" %>
+  <% end %>
+</div>
