@@ -3,8 +3,15 @@ source 'https://rubygems.org'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.0.2'
 
-# Use pg as the database for Active Record
-gem 'pg'
+gem 'mongoid', '~> 4.0.0.alpha2', github: 'mongoid/mongoid'
+gem 'bson_ext'
+
+# Omniauth
+gem 'omniauth', '~> 1.1.4'
+gem 'omniauth-facebook', '~> 1.5.1'
+gem 'omniauth-instagram', '~> 1.0.1'
+gem 'omniauth-foursquare', '~> 0.0.8'
+
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 4.0.0'

@@ -9,4 +9,4 @@
 
 # Make sure your secret_key_base is kept private
 # if you're sharing your code publicly.
-CodenameHome::Application.config.secret_key_base = '88070fad089bb2506faef9c3d9434f397ceaf64f96b10c448af8e038fd00f07d0825db6bffdab41593f2a528e64ca178a07a2672b886680e9c08ca08a5c09eb1'
+CodenameHome::Application.config.secret_key_base = '2a51b30389784dde9f6a72ab2fcb5e5f0a7b97edde4d6a8b25d67d72e0600e20f87f5e1707f448d3614bb1ce5386ed289f1a8965f685729271845619db58a522'
