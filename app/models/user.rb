@@ -10,22 +10,28 @@ class User
 
   embeds_one :facebook, class_name: 'Accounts::Facebook::Storage'
 
-  alias_method :link_facebook, :create_facebook
-
   def self.create_or_retrieve(auth)
+    user = self.find_by_facebook_uid(auth.uid)
+    if user.nil?
+      user = self.create
+      user.link_facebook(auth)
+    end
+    user
+  end
+
+  def self.find_by_facebook_uid(uid)
+    self.where({'facebook.uid' => uid}).first
+  end
+
+  def link_facebook(auth)
     if auth.respond_to?(:uid)
-      storage = self.where({'facebook.uid' => auth.uid}).first
-      if storage.nil?
-        new_user = self.create
-        new_user.link_facebook(
-            {provider: auth.provider,
-             uid: auth.uid,
-             name: auth.info.name,
-             oauth_token: auth.credentials.token,
-             oauth_expires_at: Time.at(auth.credentials.expires_at)}
-        )
-      end
-      storage
+      create_facebook(
+          {provider: auth.provider,
+           uid: auth.uid,
+           name: auth.info.name,
+           oauth_token: auth.credentials.token,
+           oauth_expires_at: Time.at(auth.credentials.expires_at)}
+      )
     end
   end
 end
