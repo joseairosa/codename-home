@@ -1,6 +1,6 @@
 class SessionsController < ApplicationController
   def create
-    user = User.create_or_retrieve(env["omniauth.auth"])
+    user = User.create_or_retrieve(session[:user_id], env["omniauth.auth"])
     session[:user_id] = user.id
     redirect_to root_url
   end
