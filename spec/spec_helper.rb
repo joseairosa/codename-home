@@ -12,6 +12,16 @@ Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 # If you are not using ActiveRecord, you can remove this line.
 ActiveRecord::Migration.check_pending! if defined?(ActiveRecord::Migration)
 
+OmniAuth.config.test_mode = true
+omniauth_hash =
+    {:provider => "facebook",
+     :uid      => "1234",
+     :info   => {:name       => "John Doe",
+                 :email      => "johndoe@email.com"},
+     :credentials => {:token => "testtoken234tsdf"}}
+
+OmniAuth.config.add_mock(:facebook, omniauth_hash)
+
 RSpec.configure do |config|
   # ## Mock Framework
   #
@@ -38,5 +48,17 @@ RSpec.configure do |config|
   # order dependency and want to debug it, you can fix the order by providing
   # the seed, which is printed after each run.
   #     --seed 1234
-  config.order = "random"
+  config.order = 'random'
+
+  config.before(:suite) do
+    DatabaseCleaner[:mongoid].strategy = :truncation
+  end
+
+  config.before(:each) do
+    DatabaseCleaner[:mongoid].start
+  end
+
+  config.after(:each) do
+    DatabaseCleaner[:mongoid].clean
+  end
 end

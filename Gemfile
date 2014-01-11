@@ -15,6 +15,7 @@ gem 'omniauth-foursquare', '~> 0.0.8'
 # Social frameworks
 # Facebook
 gem 'koala', '~> 1.8.0rc1'
+gem 'instagram', '~> 0.10.0'
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 4.0.0'
@@ -53,7 +54,9 @@ group :development do
 end
 
 group :test do
-  gem 'rspec-rails'
+  gem 'rspec-rails', '~> 2.14.1'
+
+  gem 'database_cleaner', '~> 1.2.0'
 end
 
 # Use ActiveModel has_secure_password

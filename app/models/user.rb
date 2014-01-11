@@ -4,76 +4,65 @@ class User
 
   field :email
 
-  index({'facebook.uid' => 1}, {unique: true})
-  index({'instagram.uid' => 1}, {unique: true})
+  index({'network.uid' => 1})
 
   index({email: 1}, {sparse: true, unique: true})
 
-  embeds_one :facebook, class_name: 'Accounts::Facebook::Storage'
-  embeds_one :instagram, class_name: 'Accounts::Instagram::Storage'
+  embeds_many :networks, class_name: 'Network::Storage'
 
   def self.create_or_retrieve(uid, auth)
-    case auth.provider
-      when 'facebook'
-        user = self.find_by_facebook_uid(auth.uid)
-        unless user
-          user = self.find_or_create_by(id: uid)
-          user.link_facebook(auth)
-        end
-        #signed_in_user.link_facebook(auth) unless signed_in_user.facebook
-        #
-        #unless facebook_user
-        #  signed_in_user.link_facebook(auth) unless user.facebook
-        #end
-        #signed_in_user = self.find_or_create_by(id: uid)
-        #user.link_facebook(auth) unless user.facebook
-      when 'instagram'
-        user = self.find_by_instagram_uid(auth.uid)
-        unless user
-          user = self.find_or_create_by(id: uid)
-          user.link_instagram(auth)
-        end
-        #user.link_instagram(auth) unless user.instagram
-      when 'foursquare'
-      else
-        # do nothing
+    user = self.find_by_account(auth.provider, auth.uid)
+    unless user
+      user = self.where(id: uid).first
+      user = self.create! unless user
+      user.link_account(auth)
     end
     user
   end
 
-  def self.find_by_facebook_uid(uid)
-    self.where({'facebook.uid' => uid}).first
+  def self.find_by_account(provider, uid)
+    self.where({'networks.provider' => provider, 'networks.uid' => uid}).first
   end
 
-  def self.find_by_instagram_uid(uid)
-    self.where({'instagram.uid' => uid}).first
-  end
-
-  def link_facebook(auth)
+  def link_account(auth)
     if auth.respond_to?(:uid)
-      create_facebook(
-          {provider: auth.provider,
-           uid: auth.uid,
-           name: auth.info.name,
-           oauth_token: auth.credentials.token,
-           oauth_expires_at: Time.at(auth.credentials.expires_at)}
-      )
+      if auth.credentials.expires_at
+        oauth_expires_at = Time.at(auth.credentials.expires_at)
+      else
+        oauth_expires_at = nil
+      end
+      networks.create!({
+        provider: auth.provider,
+        uid: auth.uid,
+        name: auth.info.name,
+        oauth_token: auth.credentials.token,
+        oauth_expires_at: oauth_expires_at,
+        source: auth
+      })
     end
   end
 
-  def link_instagram(auth)
-    if auth.respond_to?(:uid)
-      create_instagram(
-          {provider: auth.provider,
-           uid: auth.uid,
-           name: auth.info.name,
-           oauth_token: auth.credentials.token,
-           oauth_expires_at: nil}
-      )
-    end
+  def facebook
+    find_network :facebook
   end
 
-  def graph_api
-    @graph_api ||= Koala::Facebook::API.new(facebook.oauth_token) if facebook
+  def facebook_api
+    @facebook_api ||= Koala::Facebook::API.new(facebook.oauth_token) if has_network? :facebook
+  end
+
+  def instagram
+    find_network :instagram
+  end
+
+  def instagram_api
+    @instagram_api ||= Instagram.client(:access_token => instagram.oauth_token) if has_network? :instagram
+  end
+
+  def has_network?(network)
+    !!send(network.to_sym)
+  end
+
+  def find_network(network)
+    networks.where(provider: network.to_s).first
   end
 end
