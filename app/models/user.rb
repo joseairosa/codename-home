@@ -34,4 +34,8 @@ class User
       )
     end
   end
+
+  def graph_api
+    @graph_api ||= Koala::Facebook::API.new(facebook.oauth_token) if facebook
+  end
 end

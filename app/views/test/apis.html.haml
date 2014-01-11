@@ -1,0 +1,18 @@
+#user_nav
+  %h2 Facebook
+  - if current_user
+    Signed in as
+    = succeed '!' do
+      %strong= current_user.facebook.name
+    = link_to 'Sign out', signout_path, id: 'sign_out'
+    %div
+      %div Showing 10 friends
+      %ul
+        - @facebook_api.get_connections('me', 'friends', limit: 10).each do |friend|
+          %li
+            = link_to friend['name'], "https://www.facebook.com/#{friend['id']}", id: "fb_user_#{friend['id']}",
+            target: '_blank'
+  - else
+    = link_to 'Sign in with Facebook', '/auth/facebook', id: 'sign_in'
+  %h2 Instagram
+  %h2 foursquare
