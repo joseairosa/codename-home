@@ -16,6 +16,7 @@ gem 'omniauth-foursquare', '~> 0.0.8'
 # Facebook
 gem 'koala', '~> 1.8.0rc1'
 gem 'instagram', '~> 0.10.0'
+gem 'foursquare2', '~> 1.9.8'
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 4.0.0'

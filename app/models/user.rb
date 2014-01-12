@@ -58,6 +58,14 @@ class User
     @instagram_api ||= Instagram.client(:access_token => instagram.oauth_token) if has_network? :instagram
   end
 
+  def foursquare
+    find_network :foursquare
+  end
+
+  def foursquare_api
+    @foursquare_api ||= Foursquare2::Client.new(:oauth_token => foursquare.oauth_token) if has_network? :foursquare
+  end
+
   def has_network?(network)
     !!send(network.to_sym)
   end

@@ -1,29 +1,46 @@
 #user_nav
-  %h2 Facebook
+  %h1 Facebook
   - if current_user && current_user.has_network?(:facebook)
     Signed in as
     = succeed '!' do
       %strong= current_user.facebook.name
     = link_to 'Sign out', signout_path, id: 'facebook_sign_out'
     %div
-      %div Showing 10 friends
+      %div
+        %p
+          %h3 Showing 10 friends
       %ul
-        - @facebook_api.get_connections('me', 'friends', limit: 10).each do |friend|
+        - current_user.facebook_api.get_connections('me', 'friends', limit: 10).each do |friend|
           %li
             = link_to friend['name'], "https://www.facebook.com/#{friend['id']}", id: "fb_user_#{friend['id']}",
             target: '_blank'
   - else
     = link_to 'Sign in with Facebook', '/auth/facebook', id: 'facebook_sign_in'
-  %h2 Instagram
+  %h1 Instagram
   - if current_user && current_user.has_network?(:instagram)
     Signed in as
     = succeed '!' do
       %strong= current_user.instagram.name
     = link_to 'Sign out', signout_path, id: 'instagram_sign_out'
     %div
-      %div Recent media
+      %div
+        %p
+          %h3 Recent media
       - current_user.instagram_api.user_recent_media.each do |media_item|
         = image_tag(media_item.images.thumbnail.url)
   - else
     = link_to 'Sign in with Instagram', "https://api.instagram.com/oauth/authorize/?client_id=#{ENV['INSTAGRAM_APP_ID']}&redirect_uri=http://localhost:3000/auth/instagram/callback&response_type=code", id: 'instagram_sign_in'
-  %h2 foursquare
+  %h1 foursquare
+  - if current_user && current_user.has_network?(:foursquare)
+    Signed in as
+    = succeed '!' do
+      %strong= current_user.foursquare.name
+    = link_to 'Sign out', signout_path, id: 'foursquare_sign_out'
+    %div
+      %div
+        %p
+          %h3 Recent 10 check-ins
+      - current_user.foursquare_api.recent_checkins(limit: 10).each do |checkin|
+        %p= "#{checkin.user.firstName} #{checkin.user.lastName} @ #{checkin.venue.name} (#{Time.at(checkin.createdAt)})"
+  - else
+    = link_to 'Sign in with foursquare', "https://foursquare.com/oauth2/authenticate/?client_id=#{ENV['FOURSQUARE_APP_ID']}&response_type=code&redirect_uri=http://localhost:3000/auth/foursquare/callback", id: 'foursquare_sign_in'
