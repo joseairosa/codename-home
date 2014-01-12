@@ -1,9 +1,16 @@
 require 'spec_helper'
 
 describe User do
+
   let(:auth) { OmniAuth.config.mock_auth[:facebook] }
 
+  it { expect(described_class).to embed_many(:networks) }
+  it { expect(described_class).to have_index_for('network.uid' => 1) }
+  it { expect(described_class).to have_index_for(email: 1).with_options(unique: true, sparse: true) }
+  it { expect(described_class).to have_field(:email) }
+
   describe '.create_or_retrieve' do
+
     before do
       expect(described_class).to receive(:find_by_account).and_call_original
     end
