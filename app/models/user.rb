@@ -42,28 +42,22 @@ class User
     end
   end
 
-  def facebook
-    find_network :facebook
-  end
-
   def facebook_api
     @facebook_api ||= Koala::Facebook::API.new(facebook.oauth_token) if has_network? :facebook
-  end
-
-  def instagram
-    find_network :instagram
   end
 
   def instagram_api
     @instagram_api ||= Instagram.client(:access_token => instagram.oauth_token) if has_network? :instagram
   end
 
-  def foursquare
-    find_network :foursquare
-  end
-
   def foursquare_api
     @foursquare_api ||= Foursquare2::Client.new(:oauth_token => foursquare.oauth_token) if has_network? :foursquare
+  end
+
+  SUPPORTED_NETWORKS.each do |network|
+    define_method(network) do
+      find_network network
+    end
   end
 
   def has_network?(network)

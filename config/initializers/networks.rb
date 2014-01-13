@@ -1,0 +1,1 @@
+SUPPORTED_NETWORKS = [:facebook, :instagram, :foursquare]
