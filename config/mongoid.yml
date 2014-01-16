@@ -70,3 +70,14 @@ test:
         # low amounts for fast failures.
         max_retries: 1
         retry_interval: 0
+production:
+  sessions:
+    default:
+      database: codename-home
+      username: elfenleid
+      password: X/T9NX9cLYs,
+      hosts:
+        - dharma.mongohq.com:10067
+      options:
+  options:
+    raise_not_found_error: false
