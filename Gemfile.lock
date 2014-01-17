@@ -9,6 +9,12 @@ GIT
       tzinfo (>= 0.3.37)
 
 GIT
+  remote: git@github.com:joseairosa/awesome_print.git
+  revision: f36e788584801aa528a284693b54faeee4467a6d
+  specs:
+    awesome_print (1.2.0)
+
+GIT
   remote: git@github.com:joseairosa/mongoid-rspec.git
   revision: 9ef0509392f0b40c59c55e1464a91dca31559e26
   specs:
@@ -253,7 +259,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  better_errors
+  awesome_print!
+  better_errors (~> 1.1.0)
   bson_ext
   coffee-rails (~> 4.0.0)
   database_cleaner (~> 1.2.0)
