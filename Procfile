@@ -1,0 +1,1 @@
+worker:  RAILS_ENV=production bundle exec rake db:create_indexes 
