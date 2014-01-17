@@ -1,5 +1,7 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 ENV['RAILS_ENV'] ||= 'test'
+ENV['INSTAGRAM_APP_ID'] = '123123123123'
+ENV['FOURSQUARE_APP_ID'] = '098765432111'
 require File.expand_path('../../config/environment', __FILE__)
 require 'rspec/rails'
 require 'rspec/autorun'
