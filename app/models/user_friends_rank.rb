@@ -4,10 +4,17 @@ class UserFriendsRank
   attr_reader :ranks, :feed_data, :like_data
 
   SCORE_WEIGHTS = {
-    with_tags: 5,
+    with_tags:    5,
     message_tags: 1.7,
-    story_tags: 1.5,
-    from: 1
+    story_tags:   1.5,
+    from:         1,
+    like_photo:   5,
+    like_album:   2.5,
+    like_link:    1,
+    like_video:   1,
+    like_status:  10,
+    like_checkin: 5,
+    like_comment: 2.5
   }
 
   def initialize(user, network)
@@ -35,7 +42,7 @@ class UserFriendsRank
     per_page = 5000
     pages.times do |page|
       Rails.logger.debug "Getting page #{page+1}..."
-      %w(photo album link video status checkin comment).each_with_index do |data, i|
+      %w(photo album link video status checkin comment).each do |data|
         case data
           when 'photo', 'album'
             owner_id = 'owner'
@@ -57,7 +64,7 @@ class UserFriendsRank
             object_id = "#{data}_id"
         end
 
-        query_hash["query#{page}#{i}".to_sym] = "SELECT uid, name FROM user WHERE uid IN (SELECT #{owner_id} FROM #{data} WHERE #{object_id} IN (SELECT object_id FROM like WHERE user_id = me() AND object_type = '#{data}' LIMIT #{100*page},#{per_page}))"
+        query_hash["#{data}_#{page}".to_sym] = "SELECT uid, name FROM user WHERE uid IN (SELECT #{owner_id} FROM #{data} WHERE #{object_id} IN (SELECT object_id FROM like WHERE user_id = me() AND object_type = '#{data}' LIMIT #{100*page},#{per_page}))"
       end
     end
     ap query_hash
@@ -76,6 +83,7 @@ class UserFriendsRank
       rank_with_tags(entry_hash)
       rank_from(entry_hash)
     end
+    rank_likes
     nil
   end
 
@@ -84,6 +92,14 @@ class UserFriendsRank
   end
 
   private
+
+  def rank_likes
+    @like_data.each do |query, data|
+      data.each do |user_hash|
+        set_rank("like_#{query.split('_').first}".to_sym, user_hash['uid'], user_hash['name'])
+      end
+    end
+  end
 
   def rank_story_tags(user_hash)
     if user_hash['story_tags']
@@ -121,9 +137,9 @@ class UserFriendsRank
 
   def set_rank(score, uid, name=nil)
     if uid != @user.facebook.uid
-      @ranks[uid] ||= { uid: uid, name: name, score: 0 }
-      @ranks[uid][:score] += 1*SCORE_WEIGHTS[score]
-      Rails.logger.debug "Added #{1*SCORE_WEIGHTS[score]} to score '#{score}' for user #{name} (#{uid}). New total: #{@ranks[uid][:score]}."
+      @ranks[uid.to_s] ||= { uid: uid.to_s, name: name, score: 0 }
+      @ranks[uid.to_s][:score] += 1*SCORE_WEIGHTS[score]
+      Rails.logger.debug "Added #{1*SCORE_WEIGHTS[score]} to score '#{score}' for user #{name} (#{uid}). New total: #{@ranks[uid.to_s][:score]}."
     end
   end
 
