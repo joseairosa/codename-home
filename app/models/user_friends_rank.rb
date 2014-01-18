@@ -4,17 +4,17 @@ class UserFriendsRank
   attr_reader :ranks, :feed_data, :like_data
 
   SCORE_WEIGHTS = {
-    with_tags:    5,
-    message_tags: 1.7,
-    story_tags:   1.5,
+    with_tags:    10,
+    message_tags: 7,
+    story_tags:   3,
     from:         1,
-    like_photo:   5,
-    like_album:   2.5,
-    like_link:    1,
-    like_video:   1,
+    like_photo:   8,
+    like_album:   3,
+    like_link:    6,
+    like_video:   2,
     like_status:  10,
     like_checkin: 5,
-    like_comment: 2.5
+    like_comment: 4
   }
 
   def initialize(user, network)
