@@ -15,8 +15,8 @@ class User
     unless user
       user = self.where(id: uid).first
       user = self.create! unless user
-      user.link_account(auth)
     end
+    user.link_or_update_account(auth)
     user
   end
 
@@ -24,21 +24,30 @@ class User
     self.where({'networks.provider' => provider, 'networks.uid' => uid}).first
   end
 
-  def link_account(auth)
+  def link_or_update_account(auth)
     if auth.respond_to?(:uid)
       if auth.credentials.expires_at
         oauth_expires_at = Time.at(auth.credentials.expires_at)
       else
         oauth_expires_at = nil
       end
-      networks.create!({
-        provider: auth.provider,
-        uid: auth.uid,
-        name: auth.info.name,
-        oauth_token: auth.credentials.token,
-        oauth_expires_at: oauth_expires_at,
-        source: auth
-      })
+      network = find_network(auth.provider)
+      if network
+        network.update_attributes({
+          oauth_token: auth.credentials.token,
+          oauth_expires_at: oauth_expires_at,
+          source: auth
+        })
+      else
+        networks.create!({
+          provider: auth.provider,
+          uid: auth.uid,
+          name: auth.info.name,
+          oauth_token: auth.credentials.token,
+          oauth_expires_at: oauth_expires_at,
+          source: auth
+        })
+      end
     end
   end
 

@@ -30,7 +30,7 @@ describe User do
 
         it {
           user = User.create
-          user.link_account(auth)
+          user.link_or_update_account(auth)
           expect(subject).to eq user
           expect(user.networks.first.uid).to eq auth.uid
         }
@@ -51,7 +51,7 @@ describe User do
 
         it {
           user = User.create
-          user.link_account(auth)
+          user.link_or_update_account(auth)
           expect(subject).to eq user
           expect(user.networks.first.uid).to eq auth.uid
         }
