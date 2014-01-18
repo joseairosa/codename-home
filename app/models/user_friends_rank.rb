@@ -11,7 +11,7 @@ class UserFriendsRank
     like_photo:   8,
     like_album:   3,
     like_link:    6,
-    like_video:   2,
+    like_video:   3,
     like_status:  10,
     like_checkin: 5,
     like_comment: 4
