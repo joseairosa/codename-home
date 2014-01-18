@@ -14,6 +14,14 @@
           %li
             = link_to friend['name'], "https://www.facebook.com/#{friend['id']}", id: "fb_user_#{friend['id']}",
             target: '_blank'
+      %div
+        %p
+          %h3 Showing 10 top friends
+      %ul
+        - UserFriendsRank.new(current_user, :facebook).sorted_ranks.first(10).each do |uid, user_hash|
+          %li
+            = link_to user_hash[:name], "https://www.facebook.com/#{user_hash[:uid]}", id: "fb_user_#{user_hash[:uid]}",
+            target: '_blank'
   - else
     = link_to 'Sign in with Facebook', '/auth/facebook', id: 'facebook_sign_in'
   %h1 Instagram

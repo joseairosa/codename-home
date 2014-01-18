@@ -20,18 +20,16 @@ class UserFriendsRank
   def initialize(user, network)
     @user, @network = user, network
     @ranks, @feed_data = {}, []
+    generate_feed_data
+    generate_likes_data
+    generate_ranks
   end
 
   def generate_feed_data
-    pages = 20
-    per_page = 25
-    Rails.logger.debug "Generating data for #{pages*per_page} entries on user feed..."
-    current_page = @user.facebook_api.get_connections('me','feed', fields: 'id,story_tags,status_type,from,comments,type,message_tags', limit: per_page)
-    pages.times do |page|
-      Rails.logger.debug "Getting page #{page+1}..."
-      @feed_data += current_page
-      current_page = current_page.next_page
-    end
+    per_page = 250
+    Rails.logger.debug "Generating data for #{per_page} entries on user feed..."
+    fields_to_get = 'id,story_tags,status_type,from,comments,type,message_tags'
+    @feed_data = @user.facebook_api.get_connections('me','feed', fields: fields_to_get, limit: per_page)
     nil
   end
 
@@ -64,11 +62,14 @@ class UserFriendsRank
             object_id = "#{data}_id"
         end
 
-        query_hash["#{data}_#{page}".to_sym] = "SELECT uid, name FROM user WHERE uid IN (SELECT #{owner_id} FROM #{data} WHERE #{object_id} IN (SELECT object_id FROM like WHERE user_id = me() AND object_type = '#{data}' LIMIT #{100*page},#{per_page}))"
+        limit = "#{100*page},#{per_page}"
+        query_likes = "SELECT object_id FROM like WHERE user_id = me() AND object_type = '#{data}' LIMIT #{limit}"
+        query_data = "SELECT #{owner_id} FROM #{data} WHERE #{object_id} IN (#{query_likes})"
+        query_hash["#{data}_#{page}".to_sym] = "SELECT uid, name FROM user WHERE uid IN (#{query_data})"
       end
     end
-    ap query_hash
     @like_data = @user.facebook_api.fql_multiquery(query_hash)
+    nil
   end
 
   def reset_ranks
@@ -76,6 +77,7 @@ class UserFriendsRank
   end
 
   def generate_ranks
+    reset_ranks
     @feed_data.each do |entry_hash|
       Rails.logger.debug "Processing a #{entry_hash['type']} (#{entry_hash['id']})..."
       rank_story_tags(entry_hash)
