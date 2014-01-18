@@ -1,6 +1,6 @@
 CodenameHome::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
-  config.url_options = {protocol: 'http', host: 'codenamehomeea01.ninefold-apps.com', port: nil}
+  config.url_options = {protocol: 'http', host: 'codenamehomemaster99ca.ninefold-apps.com', port: nil}
 
   # Code is not reloaded between requests.
   config.cache_classes = true
