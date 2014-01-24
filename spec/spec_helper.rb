@@ -52,6 +52,8 @@ RSpec.configure do |config|
   #     --seed 1234
   config.order = 'random'
 
+  config.include Rails.application.routes.url_helpers
+
   config.before(:suite) do
     DatabaseCleaner[:mongoid].strategy = :truncation
   end
