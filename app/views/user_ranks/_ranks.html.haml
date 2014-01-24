@@ -1,0 +1,4 @@
+%ul
+  - ranked_users.each do |_, user_hash|
+    %li
+      = link_to user_hash[:name], "https://www.facebook.com/#{user_hash[:uid]}", id: "fb_user_#{user_hash[:uid]}", target: '_blank'

@@ -10,18 +10,27 @@
         %p
           %h3 Showing 10 friends
       %ul
-        - current_user.facebook_api.get_connections('me', 'friends', limit: 10).each do |friend|
+        - current_user.facebook_api.get_connections('me', 'friends', limit: 12).each do |friend|
           %li
             = link_to friend['name'], "https://www.facebook.com/#{friend['id']}", id: "fb_user_#{friend['id']}",
             target: '_blank'
+      %div{ class: 'change_ranks' }
+        %p
+          %h3 Change ranks
+          = form_for 'user_ranks', url: user_ranks_path, method: :get, html: { id: 'user_ranks_form' }, data: { remote: true } do |f|
+            - UserFriendsRank::SCORE_WEIGHTS.each do |key, score|
+              %div
+                = f.label key, key.to_s.humanize, class: 'form_label'
+                = f.text_field key, id: "user_ranks_#{key}", value: score
+            %div= f.submit "I'm lonley, get friends", id: 'user_ranks_submit'
       %div
         %p
-          %h3 Showing 10 top friends
-      %ul
-        - UserFriendsRank.new(current_user, :facebook).sorted_ranks.first(10).each do |uid, user_hash|
-          %li
-            = link_to user_hash[:name], "https://www.facebook.com/#{user_hash[:uid]}", id: "fb_user_#{user_hash[:uid]}",
-            target: '_blank'
+          %h3 Top friends
+          .loading
+            = image_tag('http://www.ajaxload.info/cache/FF/FF/FF/00/00/00/6-0.gif')
+          %div{ id: 'ranked_friends', class: 'ajax' }
+            %p Change values to the right
+
   - else
     = link_to 'Sign in with Facebook', '/auth/facebook', id: 'facebook_sign_in'
   %h1 Instagram

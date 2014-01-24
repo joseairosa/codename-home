@@ -1,3 +1,24 @@
 // Place all the styles related to the Test controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+.loading {
+  display: none;
+  margin: 10px;
+}
+
+.form_label {
+  float: left;
+  width: 100px;
+}
+
+input[type=text] {
+  text-align: center;
+  width: 20px;
+}
+
+.change_ranks {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}

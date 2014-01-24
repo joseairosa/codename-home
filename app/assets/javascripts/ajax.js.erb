@@ -1,0 +1,9 @@
+$(function() {
+  $('#user_ranks_form').on("ajax:beforeSend", function() {
+    $('#ranked_friends').html('');
+    $(".loading").show();
+  })
+  $('#user_ranks_form').on("ajax:complete", function() {
+    $(".loading").hide();
+  })
+});

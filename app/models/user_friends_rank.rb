@@ -17,8 +17,9 @@ class UserFriendsRank
     like_comment: 4
   }
 
-  def initialize(user, network)
-    @user, @network = user, network
+  def initialize(user, network, score_weights=SCORE_WEIGHTS)
+    Rails.logger.debug "Starting rank generation for #{network.to_s} with scoring table #{score_weights}"
+    @user, @network, @score_weights = user, network, score_weights
     @ranks, @feed_data = {}, []
     generate_feed_data
     generate_likes_data
@@ -140,8 +141,8 @@ class UserFriendsRank
   def set_rank(score, uid, name=nil)
     if uid != @user.facebook.uid
       @ranks[uid.to_s] ||= { uid: uid.to_s, name: name, score: 0 }
-      @ranks[uid.to_s][:score] += 1*SCORE_WEIGHTS[score]
-      Rails.logger.debug "Added #{1*SCORE_WEIGHTS[score]} to score '#{score}' for user #{name} (#{uid}). New total: #{@ranks[uid.to_s][:score]}."
+      @ranks[uid.to_s][:score] += 1*@score_weights[score.to_sym].to_i
+      Rails.logger.debug "Added #{1*@score_weights[score.to_sym].to_i} to score '#{score}' for user #{name} (#{uid}). New total: #{@ranks[uid.to_s][:score]}."
     end
   end
 
