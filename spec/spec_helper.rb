@@ -25,7 +25,7 @@ omniauth_hash =
 OmniAuth.config.add_mock(:facebook, omniauth_hash)
 
 RSpec.configure do |config|
-  # ## Mock Framework
+  # # Mock Framework
   #
   # If you prefer to use mocha, flexmock or RR, uncomment the appropriate line:
   #
